@@ -1,44 +1,27 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import HomeStackScreen from './pages/HomeStackScreen';
-import AlbumStackScreen from './pages/AlbumStackScreen';
-import MyMusicStackScreen from './pages/MyMusicStackScreen';
-import ProfileStackScreen from './pages/ProfileStackScreen';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import Splash from './components/SplashScreen';
+import SpotifyAuth from './auth/SpotifyAuth';
+import AllBottomTabs from './navigators/AllBottomTabs';
 
-const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <StatusBar />
-      <Tab.Navigator
-        initialRouteName="Home"
-        screenOptions={{ headerShown: false }} // header title 제거
-      >
-        <Tab.Screen
-          name="Home"
-          component={HomeStackScreen}
-          options={{ title: 'Home' }}
-        />
-        <Tab.Screen
-          name="Album"
-          component={AlbumStackScreen}
-          options={{ title: 'Album' }}
-        />
-        <Tab.Screen
-          name="My Music"
-          component={MyMusicStackScreen}
-          options={{ title: 'My Music' }}
-        />
-        <Tab.Screen
-          name="Profile"
-          component={ProfileStackScreen}
-          options={{ title: 'Profile' }}
-        />
-      </Tab.Navigator>
-    </NavigationContainer>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <Splash />
+
+      <StatusBar style="light" />
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Login" component={SpotifyAuth} />
+          <Stack.Screen name="BottomTabs" component={AllBottomTabs} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </GestureHandlerRootView>
   );
 }
 
