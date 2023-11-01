@@ -30,7 +30,7 @@ const ImageItems = [
   // ... 추가 이미지들
 ];
 
-const HomeScreen = ({ navigation }: HomeScreenProps) => {
+const HomeScreen = ({ navigation }: HomeScreenProps, { route }: any) => {
   const width = Dimensions.get('window').width;
 
   // press-swipe
@@ -48,7 +48,7 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
   }, []);
   return (
     <ScrollView>
-      {/* <Text>dkdkd</Text> */}
+      {/* <Text>{code}</Text> */}
       <TouchableOpacity>
         <Carousel
           loop={true}
