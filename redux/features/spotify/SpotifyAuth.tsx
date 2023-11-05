@@ -1,4 +1,4 @@
-import { useEffect, useContext } from 'react';
+import { useEffect } from 'react';
 import * as WebBrowser from 'expo-web-browser';
 import { makeRedirectUri, useAuthRequest } from 'expo-auth-session';
 import {
@@ -8,6 +8,9 @@ import {
   ImageBackground,
   TouchableOpacity,
 } from 'react-native';
+import { useAppDispatch } from '../../hooks';
+import { getAccessToken, getRefreshToken } from './spotifySlice';
+import { Buffer } from 'buffer';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -18,9 +21,12 @@ const discovery = {
 };
 
 const SPOTIFY_CLIENT_ID = process.env.EXPO_PUBLIC_SPOTIFY_CLIENT_ID;
+const SPOTIFY_CLIENT_SECRET = process.env.EXPO_PUBLIC_SPOTIFY_CLIENT_SECRET;
 const SPOTIFY_REDIRECT_URI = process.env.EXPO_PUBLIC_SPOTIFY_REDIRECT_URI;
 
 export default function SpotifyAuth({ navigation }: any) {
+  const dispatch = useAppDispatch();
+
   const [request, response, promptAsync] = useAuthRequest(
     {
       clientId: SPOTIFY_CLIENT_ID,
@@ -38,7 +44,35 @@ export default function SpotifyAuth({ navigation }: any) {
   useEffect(() => {
     if (response?.type === 'success') {
       const { code } = response.params;
-      console.log('code', code);
+
+      const requestBody = new URLSearchParams();
+      requestBody.append('code', code);
+      requestBody.append('grant_type', 'authorization_code');
+      SPOTIFY_REDIRECT_URI
+        ? requestBody.append('redirect_uri', SPOTIFY_REDIRECT_URI)
+        : null;
+
+      fetch(discovery.tokenEndpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          Authorization:
+            'Basic ' +
+            Buffer.from(
+              `${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`
+            ).toString('base64'),
+        },
+        body: requestBody.toString(),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          const { access_token, refresh_token } = data;
+          dispatch(getAccessToken(access_token));
+          dispatch(getRefreshToken(refresh_token));
+        })
+        .catch((error) => {
+          console.error('Token exchange error:', error);
+        });
 
       navigation.navigate('BottomTabs');
     }
@@ -47,7 +81,7 @@ export default function SpotifyAuth({ navigation }: any) {
   return (
     <View style={styles.container}>
       <ImageBackground
-        source={require('../assets/music_splash.jpg')}
+        source={require('../../../assets/music_splash.jpg')}
         resizeMode="contain"
         style={styles.backgroundImage}
       >

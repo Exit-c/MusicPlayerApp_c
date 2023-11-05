@@ -7,9 +7,7 @@ import ProfileStackScreen from './ProfileStackScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 const Tab = createBottomTabNavigator();
 
-const AllBottomTabs = ({ route }: any) => {
-  const { code } = route.params;
-  console.log('codeAll', code);
+const AllBottomTabs = () => {
   return (
     <View style={{ flex: 1 }}>
       <StatusBar style="dark" />

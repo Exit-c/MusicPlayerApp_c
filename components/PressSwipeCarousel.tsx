@@ -1,15 +1,15 @@
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import {
   StyleSheet,
-  Text,
   View,
-  Button,
-  ScrollView,
   TouchableOpacity,
   Dimensions,
   ViewStyle,
 } from 'react-native';
-import { HomeScreenProps } from '../types/home';
+
+interface PressSwipeCarouselProps {
+  data: any[];
+}
 
 // press-swipe
 import type { ImageSourcePropType } from 'react-native';
@@ -30,7 +30,9 @@ const ImageItems = [
   // ... 추가 이미지들
 ];
 
-const HomeScreen = ({ navigation }: HomeScreenProps, { route }: any) => {
+const PressSwipeCarousel: React.FC<PressSwipeCarouselProps> = ({ data }) => {
+  console.log('data!!', data);
+
   const width = Dimensions.get('window').width;
 
   // press-swipe
@@ -47,15 +49,15 @@ const HomeScreen = ({ navigation }: HomeScreenProps, { route }: any) => {
     };
   }, []);
   return (
-    <ScrollView>
+    <View>
       {/* <Text>{code}</Text> */}
       <TouchableOpacity>
         <Carousel
-          loop={true}
+          loop={false}
           autoPlay={true}
           style={{ width: width, height: 240 }}
           width={width}
-          data={[...new Array(6).keys()]}
+          data={[...new Array(3).keys()]}
           onScrollBegin={() => {
             pressAnim.value = withTiming(1);
           }}
@@ -72,29 +74,7 @@ const HomeScreen = ({ navigation }: HomeScreenProps, { route }: any) => {
           scrollAnimationDuration={1200}
         />
       </TouchableOpacity>
-      <TouchableOpacity>
-        <Carousel
-          loop
-          width={width}
-          height={width / 2}
-          autoPlay={true}
-          data={[...new Array(6).keys()]}
-          scrollAnimationDuration={1000}
-          autoPlayInterval={5000}
-          renderItem={({ index }) => (
-            <View
-              style={{
-                flex: 1,
-                borderWidth: 1,
-                justifyContent: 'center',
-              }}
-            >
-              <Text style={{ textAlign: 'center', fontSize: 30 }}>{index}</Text>
-            </View>
-          )}
-        />
-      </TouchableOpacity>
-    </ScrollView>
+    </View>
   );
 };
 
@@ -117,7 +97,7 @@ const CustomItem: React.FC<ItemProps> = ({ pressAnim, source }) => {
   return (
     <Animated.View style={[{ flex: 1, overflow: 'hidden' }, animStyle]}>
       <Animated.Image
-        source={ImageItems[0]}
+        source={ImageItems[1]}
         resizeMode="center"
         style={{ width: '100%', height: '100%', backgroundColor: 'red' }}
       />
@@ -134,4 +114,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreen;
+export default PressSwipeCarousel;
